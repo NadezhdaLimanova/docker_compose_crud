@@ -1,0 +1,51 @@
+version: '3.9'
+
+volumes:
+  pgdata:
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "6000:6000"
+    depends_on:
+      - backend
+  backend:
+    build: .
+    command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
+    volumes:
+      - .:/docker_compose
+    depends_on:
+      - 'postgredb'
+  postgredb:
+    image: "postgres:latest"
+    volumes:
+      - ./logs:/var/log
+      - .:/docker-entrypoint-initdb.d
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5431:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin1 -d new_db"]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 50s
+    env_file:
+      - .env
+  pg_admin:
+    image: "dpage/pgadmin4:latest"
+    ports:
+      - 6060:80
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin1@yandex.ru"
+      PGADMIN_DEFAULT_PASSWORD: "userpassword"
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
