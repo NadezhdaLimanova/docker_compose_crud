@@ -83,12 +83,12 @@ WSGI_APPLICATION = 'stocks_products.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('POSTGRES_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': os.getenv('POSTGRES_DB', BASE_DIR / 'db.sqlite3'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+        'ENGINE': os.getenv('POSTGRES_ENGINE', 'django.db.backends.postgresql_psycopg2'),
+        'NAME': os.getenv('POSTGRES_DB', 'new_db'),
+        'HOST': os.getenv('POSTGRES_HOST', 'postgredb'),
         'PORT': os.getenv('POSTGRES_PORT', '5432'),
-        'USER': os.getenv('POSTGRES_USER', 'user'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'password')
+        'USER': os.getenv('POSTGRES_USER', 'user1'),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', 'userpassword')
     }
 }
 # Password validation
