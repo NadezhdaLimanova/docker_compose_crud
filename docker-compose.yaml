@@ -2,28 +2,34 @@ version: '3.9'
 
 volumes:
   pgdata:
+  static_volume:
+  media_volume:
 
 services:
   nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
+    build: ./nginx
     ports:
       - "6000:6000"
     depends_on:
       - backend
+    volumes:
+      - static_volume:/backend/static
+      - media_volume:/backend/media
   backend:
-    build: .
+    build: ./backend
     command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
     volumes:
-      - .:/docker_compose
+      - static_volume:/backend/static
+      - media_volume:/backend/media
     depends_on:
       - 'postgredb'
+    expose:
+      - 8000
+    env_file:
+      - ./.env
   postgredb:
-    image: "postgres:latest"
+    image: postgres:16.0-alpine
     volumes:
-      - ./logs:/var/log
-      - .:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
     ports:
       - "5433:5432"
@@ -34,13 +40,7 @@ services:
       retries: 5
       start_period: 50s
     env_file:
-      - .env
-    # environment:
-    #   - POSTGRES_USER_FILE=/run/secrets/db_user
-    #   - POSTGRES_PASSWORD_FILE=/run/secrets/db_password
-    # secrets:
-    #   - db_user
-    #   - db_password
+      - ./.env
   pg_admin:
     image: "dpage/pgadmin4:latest"
     ports:
@@ -48,15 +48,10 @@ services:
     restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: "admin1@yandex.ru"
-      PGADMIN_DEFAULT_PASSWORD: "userpassword"
+      PGADMIN_DEFAULT_PASSWORD: "pass_postgres"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     deploy:
       resources:
         limits:
           cpus: '0.5'
           memory: 1G
-# secrets:
-#   db_user:
-#     file: ./.env
-#   db_password:
-#     file: ./.env
