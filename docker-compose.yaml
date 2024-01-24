@@ -9,15 +9,15 @@ services:
   nginx:
     build: ./nginx
     ports:
-      - "6000:6000"
+      - "8000:80"
     depends_on:
-      - backend
+      - web
     volumes:
       - static_volume:/backend/static
       - media_volume:/backend/media
-  backend:
+  web:
     build: ./backend
-    command: gunicorn stocks_products.wsgi:application --bind 0.0.0.0:8000
+    command: sh ./commands.sh
     volumes:
       - static_volume:/backend/static
       - media_volume:/backend/media
