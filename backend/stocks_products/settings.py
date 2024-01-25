@@ -81,12 +81,12 @@ WSGI_APPLICATION = 'stocks_products.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': environ.get('POSTGRES_ENGINE', 'django.db.backends.sqlite3'),
-        'NAME': environ.get('POSTGRES_DB', BASE_DIR / 'db.sqlite3'),
+        'ENGINE': environ.get('POSTGRES_ENGINE', 'django.db.backends.postgresql'),
+        'NAME': environ.get('POSTGRES_DB', 'postgres'),
         'HOST': environ.get('POSTGRES_HOST', 'localhost'),
         'PORT': environ.get('POSTGRES_PORT', '5432'),
-        'USER': environ.get('POSTGRES_USER', 'user'),
-        'PASSWORD': environ.get('POSTGRES_PASSWORD', 'password')
+        'USER': environ.get('POSTGRES_USER', 'postgres'),
+        'PASSWORD': environ.get('POSTGRES_PASSWORD', 'pass_postgres')
     }
 }
 # Password validation
